@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HealthPulse AI — Community Health Intelligence</title>
+
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- Main CSS -->
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="brand-mark">HP</div>
+
+        <div class="brand-text">
+            <h1>HealthPulse AI</h1>
+            <span>Community Health Intelligence</span>
+        </div>
+    </div>
+
+    <div class="system-status">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="system-status">System Operational</span>
+    </div>
+
+</header>
+
+
+<main class="dashboard">
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="hero-kicker">
+                EARLY-WARNING PLATFORM
+            </span>
+
+            <h2>
+                Community Health
+                <span>Command Center</span>
+            </h2>
+
+            <p>
+                Transforming medical reporting data into
+                explainable community-level health signals,
+                risk intelligence and early-warning insights.
+            </p>
+
+        </div>
+
+        <div class="hero-meta">
+
+            <div class="hero-meta-item">
+                <span>PLATFORM</span>
+                <strong>HEALTHPULSE AI</strong>
+            </div>
+
+            <div class="hero-meta-item">
+                <span>ANALYTICS</span>
+                <strong>AI + ML</strong>
+            </div>
+
+            <div class="hero-meta-item">
+                <span>FORECAST</span>
+                <strong>7 DAYS</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PRIORITY ALERT -->
+    <section
+        id="priority-alert"
+        class="priority-alert low"
+    >
+
+        <div class="priority-alert-icon">!</div>
+
+        <div class="priority-alert-content">
+            <strong id="priority-alert-title">
+                Loading priority signals...
+            </strong>
+
+            <p id="priority-alert-description">
+                Analyzing current community health intelligence.
+            </p>
+        </div>
+
+        <div class="priority-alert-score">
+            <span>RISK</span>
+            <strong id="priority-alert-score">—</strong>
+        </div>
+
+    </section>
+
+
+    <!-- KPI -->
+    <section class="kpi-grid">
+
+        <div class="kpi-card">
+            <div class="kpi-icon">R</div>
+            <div class="kpi-content">
+                <span>TOTAL REPORTS</span>
+                <strong id="total-reports">—</strong>
+                <small>Medical records analyzed</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon">L</div>
+            <div class="kpi-content">
+                <span>LOCATIONS</span>
+                <strong id="locations-count">—</strong>
+                <small>Communities monitored</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon">!</div>
+            <div class="kpi-content">
+                <span>HIGH RISK</span>
+                <strong id="high-risk-count">—</strong>
+                <small>Priority signals</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon">A</div>
+            <div class="kpi-content">
+                <span>ACTIVE ANOMALIES</span>
+                <strong id="anomalies-count">—</strong>
+                <small>Unusual activity detected</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon">F</div>
+            <div class="kpi-content">
+                <span>RISING FORECASTS</span>
+                <strong id="forecasts-count">—</strong>
+                <small>Signals trending upward</small>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- MAP + LOCATION INTELLIGENCE -->
+    <section class="command-grid">
+
+        <!-- MAP -->
+        <div class="panel map-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <span class="panel-kicker">
+                        COMMUNITY RISK MAP
+                    </span>
+
+                    <h3>
+                        Geographic Health Signals
+                    </h3>
+                </div>
+
+                <span class="panel-badge">
+                    LIVE ANALYTICS
+                </span>
+
+            </div>
+
+            <div
+                id="health-map"
+                class="health-map"
+            ></div>
+
+            <div class="map-note">
+                <span>●</span>
+                Markers represent
+                <strong>community-level signals</strong>,
+                not individual patient locations.
+            </div>
+
+        </div>
+
+
+        <!-- LOCATION INTELLIGENCE -->
+        <aside
+            id="location-intelligence"
+            class="panel intelligence-panel"
+        >
+
+            <!-- EMPTY STATE -->
+            <div
+                id="location-empty"
+                class="intelligence-empty"
+            >
+
+                <div class="empty-icon">
+                    ✦
+                </div>
+
+                <span class="panel-kicker">
+                    LOCATION INTELLIGENCE
+                </span>
+
+                <h3>
+                    Select a Community
+                </h3>
+
+                <p>
+                    Click any location marker on the map
+                    to view its complete health intelligence.
+                </p>
+
+                <div class="empty-hint">
+                    ● Choose a map marker to begin
+                </div>
+
+            </div>
+
+
+            <!-- LOADING -->
+            <div
+                id="location-loading"
+                class="intelligence-loading"
+                hidden
+            >
+
+                <div class="loading-spinner"></div>
+
+                <span class="panel-kicker">
+                    LOCATION INTELLIGENCE
+                </span>
+
+                <h3 id="loading-location-name">
+                    Loading...
+                </h3>
+
+                <p>
+                    Analyzing community health data,
+                    trends and forecast signals.
+                </p>
+
+            </div>
+
+
+            <!-- ACTUAL LOCATION DATA -->
+            <div
+                id="location-content"
+                class="location-content"
+                hidden
+            >
+
+                <div class="location-header">
+
+                    <div>
+
+                        <span class="panel-kicker">
+                            LOCATION INTELLIGENCE
+                        </span>
+
+                        <h3 id="location-name">
+                            —
+                        </h3>
+
+                        <p id="location-subtitle">
+                            Community-level intelligence
+                        </p>
+
+                    </div>
+
+                    <button
+                        id="close-location"
+                        class="icon-button"
+                        type="button"
+                        title="Clear location"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <!-- CATEGORY -->
+                <div class="location-category-row">
+
+                    <div>
+                        <span class="mini-label">
+                            PRIMARY SIGNAL
+                        </span>
+
+                        <strong id="location-category">
+                            —
+                        </strong>
+                    </div>
+
+                    <span
+                        id="location-risk-badge"
+                        class="risk-badge low"
+                    >
+                        LOW
+                    </span>
+
+                </div>
+
+
+                <!-- KPI -->
+                <div class="location-kpis">
+
+                    <div class="location-stat">
+                        <span>Total Cases</span>
+                        <strong id="location-total-cases">—</strong>
+                    </div>
+
+                    <div class="location-stat">
+                        <span>Recent 14 Days</span>
+                        <strong id="location-recent-cases">—</strong>
+                    </div>
+
+                    <div class="location-stat">
+                        <span>Previous 14 Days</span>
+                        <strong id="location-previous-cases">—</strong>
+                    </div>
+
+                    <div class="location-stat">
+                        <span>14-Day Growth</span>
+                        <strong id="location-growth">—</strong>
+                    </div>
+
+                    <div class="location-stat">
+                        <span>Risk Score</span>
+                        <strong id="location-risk-score">—</strong>
+                    </div>
+
+                    <div class="location-stat">
+                        <span>Forecast</span>
+                        <strong id="location-forecast-direction">—</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- SIGNAL STATUS -->
+                <div class="intel-section">
+
+                    <div class="section-title">
+                        SIGNAL STATUS
+                    </div>
+
+                    <div class="status-grid">
+
+                        <div class="status-card">
+                            <span>Anomaly</span>
+                            <strong id="location-anomaly">
+                                —
+                            </strong>
+                        </div>
+
+                        <div class="status-card">
+                            <span>Cluster</span>
+                            <strong id="location-cluster">
+                                —
+                            </strong>
+                        </div>
+
+                        <div class="status-card">
+                            <span>Forecast</span>
+                            <strong id="location-forecast-status">
+                                —
+                            </strong>
+                        </div>
+
+                        <div class="status-card">
+                            <span>Expected Change</span>
+                            <strong id="location-expected-change">
+                                —
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CATEGORY DISTRIBUTION -->
+                <div class="intel-section">
+
+                    <div class="section-title">
+                        HEALTH CATEGORY DISTRIBUTION
+                    </div>
+
+                    <div class="category-chart-box">
+                        <canvas id="location-category-chart"></canvas>
+                    </div>
+
+                </div>
+
+
+                <!-- HISTORICAL TREND -->
+                <div class="intel-section">
+
+                    <div class="section-heading-row">
+
+                        <div>
+                            <div class="section-title">
+                                HISTORICAL TREND
+                            </div>
+
+                            <h4>
+                                Daily Community Cases
+                            </h4>
+                        </div>
+
+                        <span
+                            id="location-trend-badge"
+                            class="trend-badge"
+                        >
+                            —
+                        </span>
+
+                    </div>
+
+                    <div class="location-chart-box">
+                        <canvas id="location-trend-chart"></canvas>
+                    </div>
+
+                </div>
+
+
+                <!-- FORECAST -->
+                <div class="intel-section">
+
+                    <div class="section-heading-row">
+
+                        <div>
+                            <div class="section-title">
+                                FORECAST ENGINE
+                            </div>
+
+                            <h4>
+                                Next 7 Days
+                            </h4>
+                        </div>
+
+                        <span
+                            id="forecast-badge"
+                            class="trend-badge"
+                        >
+                            —
+                        </span>
+
+                    </div>
+
+                    <div class="location-chart-box forecast-box">
+                        <canvas id="location-forecast-chart"></canvas>
+                    </div>
+
+                </div>
+
+
+                <!-- AI EXPLANATION -->
+                <div class="intel-section ai-section">
+
+                    <div class="section-title">
+                        AI EXPLANATION
+                    </div>
+
+                    <p id="location-explanation">
+                        —
+                    </p>
+
+                </div>
+
+
+                <!-- ACTION -->
+                <div class="action-box">
+
+                    <div class="action-title">
+                        RECOMMENDED ACTION
+                    </div>
+
+                    <p id="location-action">
+                        —
+                    </p>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+
+    <!-- TOP SIGNAL -->
+    <section class="panel top-signal-panel">
+
+        <div class="panel-header">
+
+            <div>
+                <span class="panel-kicker">
+                    PRIORITY INTELLIGENCE
+                </span>
+
+                <h3>
+                    Top Community Signal
+                </h3>
+            </div>
+
+            <span class="panel-badge">
+                AI
+            </span>
+
+        </div>
+
+        <div id="top-signal">
+            <div class="loading-state">
+                Loading intelligence...
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- ANALYTICS -->
+    <section class="analytics-grid">
+
+        <div class="panel chart-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <span class="panel-kicker">
+                        TREND ANALYSIS
+                    </span>
+
+                    <h3>
+                        Category Growth
+                    </h3>
+                </div>
+
+                <span class="panel-badge">
+                    14 DAYS
+                </span>
+
+            </div>
+
+            <div class="chart-container">
+                <canvas id="category-growth-chart"></canvas>
+            </div>
+
+        </div>
+
+
+        <div class="panel chart-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <span class="panel-kicker">
+                        RISK INTELLIGENCE
+                    </span>
+
+                    <h3>
+                        Risk Distribution
+                    </h3>
+                </div>
+
+                <span class="panel-badge">
+                    CURRENT
+                </span>
+
+            </div>
+
+            <div class="chart-container doughnut-container">
+                <canvas id="risk-distribution-chart"></canvas>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- EMERGING SIGNALS -->
+    <section class="panel table-panel">
+
+        <div class="panel-header">
+
+            <div>
+                <span class="panel-kicker">
+                    EARLY WARNING
+                </span>
+
+                <h3>
+                    Emerging Community Signals
+                </h3>
+            </div>
+
+            <span class="panel-badge">
+                DETECTION
+            </span>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>LOCATION</th>
+                        <th>CATEGORY</th>
+                        <th>RECENT CASES</th>
+                        <th>GROWTH</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+
+                <tbody id="signals-table">
+                    <tr>
+                        <td colspan="5">
+                            Loading signals...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- FORECAST -->
+    <section class="panel table-panel">
+
+        <div class="panel-header">
+
+            <div>
+                <span class="panel-kicker">
+                    FORECAST ENGINE
+                </span>
+
+                <h3>
+                    7-Day Community Forecast
+                </h3>
+            </div>
+
+            <span class="panel-badge">
+                ML MODEL
+            </span>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>LOCATION</th>
+                        <th>CATEGORY</th>
+                        <th>AVG</th>
+                        <th>PEAK</th>
+                        <th>DIRECTION</th>
+                        <th>EXPECTED CHANGE</th>
+                    </tr>
+                </thead>
+
+                <tbody id="forecast-table">
+                    <tr>
+                        <td colspan="6">
+                            Loading forecasts...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- SYSTEM ARCHITECTURE -->
+    <section class="panel workflow-panel">
+
+        <div class="panel-header">
+
+            <div>
+                <span class="panel-kicker">
+                    SYSTEM ARCHITECTURE
+                </span>
+
+                <h3>
+                    How HealthPulse AI Works
+                </h3>
+            </div>
+
+            <span class="panel-badge">
+                AI PIPELINE
+            </span>
+
+        </div>
+
+        <p class="workflow-intro">
+            HealthPulse AI transforms fragmented medical
+            reporting data into explainable community-level
+            health intelligence.
+        </p>
+
+        <div class="workflow">
+
+            <div class="workflow-step">
+                <div class="workflow-number">01</div>
+                <div class="workflow-icon">📄</div>
+                <h4>Medical Reports</h4>
+                <p>CSV and medical reporting data enter the platform.</p>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-number">02</div>
+                <div class="workflow-icon">🧠</div>
+                <h4>AI / NLP</h4>
+                <p>Extracts symptoms, categories, severity and location signals.</p>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-number">03</div>
+                <div class="workflow-icon">📊</div>
+                <h4>Trend Engine</h4>
+                <p>Detects growth patterns across locations and categories.</p>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-number">04</div>
+                <div class="workflow-icon">⚠️</div>
+                <h4>Anomaly & Cluster</h4>
+                <p>Identifies unusual activity and concentrated signals.</p>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-number">05</div>
+                <div class="workflow-icon">🎯</div>
+                <h4>Risk Intelligence</h4>
+                <p>Combines trend, anomaly and cluster signals into a risk score.</p>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step">
+                <div class="workflow-number">06</div>
+                <div class="workflow-icon">🔮</div>
+                <h4>Forecast</h4>
+                <p>Projects the next 7 days using statistical forecasting.</p>
+            </div>
+
+            <div class="workflow-arrow">→</div>
+
+            <div class="workflow-step final-step">
+                <div class="workflow-number">07</div>
+                <div class="workflow-icon">🚨</div>
+                <h4>Community Action</h4>
+                <p>Generates explainable signals and recommended actions.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- DATA INGESTION -->
+    <section class="panel upload-panel">
+
+        <div class="panel-header">
+
+            <div>
+                <span class="panel-kicker">
+                    DATA INGESTION
+                </span>
+
+                <h3>
+                    Upload Medical Reports
+                </h3>
+            </div>
+
+            <span class="panel-badge">
+                CSV
+            </span>
+
+        </div>
+
+        <div
+            id="upload-drop-zone"
+            class="upload-drop-zone"
+        >
+
+            <div class="upload-icon">↑</div>
+
+            <h4>
+                Drop your CSV file here
+            </h4>
+
+            <p>
+                or click to browse medical report data
+            </p>
+
+            <input
+                type="file"
+                id="csv-file"
+                accept=".csv,text/csv"
+                hidden
+            >
+
+            <button
+                type="button"
+                id="browse-button"
+                class="upload-button secondary"
+            >
+                Choose CSV File
+            </button>
+
+        </div>
+
+        <div
+            id="selected-file"
+            class="selected-file"
+            hidden
+        >
+
+            <span class="file-icon">CSV</span>
+
+            <div class="file-info">
+                <strong id="file-name">—</strong>
+                <span id="file-size">—</span>
+            </div>
+
+            <button
+                type="button"
+                id="remove-file"
+                class="remove-file"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <label class="replace-option">
+
+            <input
+                type="checkbox"
+                id="replace-existing"
+                checked
+            >
+
+            <span>
+                Replace existing dataset
+            </span>
+
+        </label>
+
+        <button
+            type="button"
+            id="upload-button"
+            class="upload-button primary"
+            disabled
+        >
+            Upload &amp; Analyze
+        </button>
+
+        <div
+            id="upload-status"
+            class="upload-status"
+        ></div>
+
+    </section>
+
+
+    <!-- RESPONSIBLE AI -->
+    <section class="responsible-ai">
+
+        <div class="responsible-ai-icon">
+            ✓
+        </div>
+
+        <div>
+            <strong>Responsible AI Notice</strong>
+
+            <p>
+                HealthPulse AI provides community-level
+                health intelligence and early-warning signals.
+                It does not diagnose individuals or replace
+                professional medical advice.
+            </p>
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="footer">
+
+    <div class="footer-brand">
+
+        <strong>
+            HealthPulse AI
+        </strong>
+
+        <span>
+            Community Health Intelligence Platform
+        </span>
+
+    </div>
+
+    <div class="footer-note">
+        Built for community health intelligence
+    </div>
+
+</footer>
+
+
+<!-- Chart.js -->
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+></script>
+
+<!-- Leaflet -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+<!-- Application -->
+<script src="/static/app.js"></script>
+
+</body>
+</html>
